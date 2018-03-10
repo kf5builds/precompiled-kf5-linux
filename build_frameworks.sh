@@ -101,6 +101,7 @@ build_framework() {
 # ECM
 build_framework extra-cmake-modules
 
+if [[ ${BUILD_TIER_1} ]]; then
 # Tier 1 Frameworks
 build_framework attica
 build_framework kconfig
@@ -128,7 +129,9 @@ build_framework kitemmodels
 build_framework threadweaver
 build_framework syntax-highlighting
 build_framework breeze-icons
+fi
 
+if [[ ${BUILD_TIER_2} ]]; then
 # Tier 2 Frameworks
 build_framework kcompletion
 build_framework kfilemetadata
@@ -141,7 +144,9 @@ build_framework knotifications
 build_framework kpackage
 build_framework kdoctools
 build_framework kpty
+fi
 
+if [[ ${BUILD_TIER_3} ]]; then
 # Tier 3 Frameworks
 build_framework kservice
 build_framework kdesu
@@ -172,6 +177,7 @@ build_framework kcmutils
 build_framework knotifyconfig
 build_framework krunner
 build_framework kinit
+fi;
 
 # if everything went smoothly, remove the builddir
 rm -r $builddir
