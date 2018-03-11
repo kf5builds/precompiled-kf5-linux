@@ -8,15 +8,15 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - sourceline: 'ppa:beineri/opt-qt593-trusty'
+      - sourceline: 'ppa:beineri/opt-qt-5.10.1-trusty'
     packages:
-      - qt59base
-      - qt59script
-      - qt59declarative
-      - qt59tools
-      - qt59x11extras
-      - qt59svg
-      - qt59quickcontrols2
+      - qt510base
+      - qt510script
+      - qt510declarative
+      - qt510tools
+      - qt510x11extras
+      - qt510svg
+      - qt510quickcontrols2
       - ninja-build
       - libxcb-keysyms1-dev
       - libxml2-utils
@@ -52,7 +52,7 @@ install:
   - wget https://cmake.org/files/v3.11/cmake-3.11.0-rc3-Linux-x86_64.tar.gz -O- | sudo tar xz -C /usr --strip-components=1
 
 script:
-  - source /opt/qt59/bin/qt59-env.sh
+  - source /opt/qt510/bin/qt510-env.sh
 #  - ./build_frameworks.sh -i ~/kf5-debug -t Debug -g Ninja -o ~/kf5-gcc-linux64-debug.tar.xz
   - ./build_frameworks.sh -i ~/kf5-release -t Release -g Ninja -o ~/kf5-gcc7-linux64-release.tar.xz -a "-DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7"
 
