@@ -158,7 +158,7 @@ build_framework ktextwidgets
 build_framework kglobalaccel
 build_framework kxmlgui
 build_framework kbookmarks
-build_framework kwallet
+# build_framework kwallet
 build_framework kio
 build_framework kactivities
 build_framework kactivities-stats
