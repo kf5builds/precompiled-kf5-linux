@@ -52,7 +52,7 @@ env:
     - BUCKET='minio/kf5-build'
     - KF5_BUILD_TYPE="Release"
     - BUILD_GENERATOR="Ninja"
-    - KF5_INSTALL_DIR="kf5-build-output"
+    - KF5_INSTALL_DIR="${HOME}/kf5-build-output"
     - KF5_VERSION=5.44.0
     - EXTRA_CMAKE_ARGS="-DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7"
 
@@ -72,8 +72,7 @@ jobs:
       - BUILD_TIER_0=1
       - BUILD_TIER_1=1
       script:
-      - ~/mc mb ${KF5_INSTALL_DIR}
-
+      - mkdir ${KF5_INSTALL_DIR}
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
       - ~/mc mb ${BUCKET}
       - ~/mc mirror ${KF5_INSTALL_DIR} ${BUCKET} --overwrite
@@ -81,6 +80,7 @@ jobs:
       env:
       - BUILD_TIER_2=1
       script:
+      - mkdir ${KF5_INSTALL_DIR}
       - ~/mc mirror ${BUCKET} ${KF5_INSTALL_DIR} --overwrite
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
       - ~/mc mirror ${KF5_INSTALL_DIR} ${BUCKET} --overwrite
@@ -88,11 +88,13 @@ jobs:
       env:
       - BUILD_TIER_3=1
       script:
+      - mkdir ${KF5_INSTALL_DIR}
       - ~/mc mirror ${BUCKET} ${KF5_INSTALL_DIR} --overwrite
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
       - ~/mc mirror ${KF5_INSTALL_DIR} ${BUCKET} --overwrite
     - stage: upload
       script:
+      - mkdir ${KF5_INSTALL_DIR}
       - ~/mc mirror ${BUCKET} ${KF5_INSTALL_DIR} --overwrite
       - export PACKAGE_FILE_NAME="kf5-${KF5_VERSION}-${KF5_BUILD_TYPE}-ubuntu-trusty-amd64.tar.xz"
       - ./pack.sh ${KF5_INSTALL_DIR} ~/${PACKAGE_FILE_NAME}
