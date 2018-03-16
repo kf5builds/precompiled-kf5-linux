@@ -74,6 +74,7 @@ jobs:
       script:
       - mkdir ${KF5_INSTALL_DIR}
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
+      - ~/mc rm ${BUCKET} --recursive --force # Clean whatever could be left from previous builds
       - ~/mc mb ${BUCKET}
       - ~/mc mirror ${KF5_INSTALL_DIR} ${BUCKET} --overwrite
     - stage: TIER_2
