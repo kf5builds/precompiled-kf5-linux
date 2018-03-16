@@ -3,7 +3,7 @@
 set -e
 
 usage() {
-	echo "Usage: build_frameworks.sh [ -t Release|Debug  ]] [ -g <CMake Generator, like Ninja or Unix Makefiles ] [ -v version of KF5 to install, example 5.33.0 ] -i /path/to/install [ -o path/to/tarball ] [ -a Extra CMake args ]"
+	echo "Usage: build_frameworks.sh [ -t Release|Debug  ]] [ -g <CMake Generator, like Ninja or Unix Makefiles ] [ -v version of KF5 to install, example 5.33.0 ] -i /path/to/install [ -a Extra CMake args ]"
 	exit 1
 }
 
@@ -15,7 +15,7 @@ kf5Version=5.44.0
 tarballPath=""
 extraCmakeArgs=""
 
-while getopts ":t:q:g:v:i:o:a:" o; do
+while getopts ":t:q:g:v:i:a:" o; do
 	case "${o}" in
 		t) 
 			buildType=${OPTARG}
@@ -32,9 +32,6 @@ while getopts ":t:q:g:v:i:o:a:" o; do
 			;;
 		v)
 			kf5Version=${OPTARG}
-			;;
-		o)
-			tarballPath=${OPTARG}
 			;;
 		a)
 			extraCmakeArgs=${OPTARG}
@@ -183,16 +180,3 @@ fi;
 
 # if everything went smoothly, remove the builddir
 rm -r $builddir
-
-# compress if -o was specified
-if [ ! -z "$tarballPath" ]; then
-	if [ ${tarballPath: -3} == "bz2" ]; then
-		tar -cjf "$tarballPath" "$installDir"
-	elif [ ${tarballPath: -2} == "gz" ]; then
-		tar -czf "$tarballPath" "$installDir"
-	elif [ ${tarballPath: -2} == "xz" ]; then
-		tar -cJf "$tarballPath" "$installDir"
-	else
-		echo "Unrecognized file extension, end with .bz2, .gz, or .xz"
-	fi
-fi

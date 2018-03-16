@@ -55,6 +55,7 @@ env:
     - KF5_INSTALL_DIR="${HOME}/kf5-build-output"
     - KF5_VERSION=5.44.0
     - EXTRA_CMAKE_ARGS="-DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7"
+    - PACKAGE_FILE_NAME="kf5-${KF5_VERSION}-${KF5_BUILD_TYPE}-ubuntu-trusty-amd64.tar.xz"
 
 before_install:
   # Update CMake
@@ -73,32 +74,40 @@ jobs:
       - BUILD_TIER_1=1
       script:
       - mkdir ${KF5_INSTALL_DIR}
+
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
+
       - ~/mc rm ${BUCKET} --recursive --force # Clean whatever could be left from previous builds
       - ~/mc mb ${BUCKET}
-      - ~/mc mirror ${KF5_INSTALL_DIR} ${BUCKET} --overwrite
+      - ./pack.sh ${KF5_INSTALL_DIR} ~/tier_1-${PACKAGE_FILE_NAME}
+      - ~/mc cp ~/tier_1-${PACKAGE_FILE_NAME} ${BUCKET}/tier_1-${PACKAGE_FILE_NAME}
     - stage: TIER_2
       env:
       - BUILD_TIER_2=1
       script:
       - mkdir ${KF5_INSTALL_DIR}
-      - ~/mc mirror ${BUCKET} ${KF5_INSTALL_DIR} --overwrite
+      - ~/mc cp ${BUCKET}/tier_1-${PACKAGE_FILE_NAME} ~/tier_1-${PACKAGE_FILE_NAME}
+      - tar xpvf ~/tier_1-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
+
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
-      - ~/mc mirror ${KF5_INSTALL_DIR} ${BUCKET} --overwrite
+
+      - ./pack.sh ${KF5_INSTALL_DIR} ~/tier_2-${PACKAGE_FILE_NAME}
+      - ~/mc cp ~/tier_2-${PACKAGE_FILE_NAME} ${BUCKET}/tier_2-${PACKAGE_FILE_NAME}
     - stage: TIER_3
       env:
       - BUILD_TIER_3=1
       script:
       - mkdir ${KF5_INSTALL_DIR}
-      - ~/mc mirror ${BUCKET} ${KF5_INSTALL_DIR} --overwrite
+      - ~/mc cp ${BUCKET}/tier_2-${PACKAGE_FILE_NAME} ~/tier_2-${PACKAGE_FILE_NAME}
+      - tar xpvf ~/tier_2-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
+
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
-      - ~/mc mirror ${KF5_INSTALL_DIR} ${BUCKET} --overwrite
+
+      - ./pack.sh ${KF5_INSTALL_DIR} ~/tier_3-${PACKAGE_FILE_NAME}
+      - ~/mc cp ~/tier_3-${PACKAGE_FILE_NAME} ${BUCKET}/tier_3-${PACKAGE_FILE_NAME} --overwrite
     - stage: upload
       script:
-      - mkdir ${KF5_INSTALL_DIR}
-      - ~/mc mirror ${BUCKET} ${KF5_INSTALL_DIR} --overwrite
-      - export PACKAGE_FILE_NAME="kf5-${KF5_VERSION}-${KF5_BUILD_TYPE}-ubuntu-trusty-amd64.tar.xz"
-      - ./pack.sh ${KF5_INSTALL_DIR} ~/${PACKAGE_FILE_NAME}
+      - ~/mc cp ${BUCKET}/tier_3-${PACKAGE_FILE_NAME} ~/${PACKAGE_FILE_NAME}
       - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
       - bash ./upload.sh ~/${PACKAGE_FILE_NAME}
     - stage: clean
