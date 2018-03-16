@@ -3,7 +3,6 @@ sudo: required
 os: linux
 dist: trusty
 
-
 addons:
   apt:
     sources:
@@ -47,15 +46,57 @@ branches:
     - # Do not build tags that we create when we upload to GitHub Releases
     - /^(?i:continuous)$/
 
-install:
+
+env:
+  global:
+    - BUCKET='minio/kf5-build'
+    - KF5_BUILD_TYPE="Release"
+    - BUILD_GENERATOR="Ninja"
+    - KF5_INSTALL_DIR="kf5-build-output"
+    - KF5_VERSION=5.44.0
+    - EXTRA_CMAKE_ARGS="-DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7"
+
+before_install:
   # Update CMake
   - wget https://cmake.org/files/v3.11/cmake-3.11.0-rc3-Linux-x86_64.tar.gz -O- | sudo tar xz -C /usr --strip-components=1
-
-script:
+  - wget https://dl.minio.io/client/mc/release/linux-amd64/mc -O ~/mc
+  - chmod +x ~/mc
+  - ~/mc config host add minio https://nxos-data.assassinate-you.net/ ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY}
   - source /opt/qt510/bin/qt510-env.sh
-#  - ./build_frameworks.sh -i ~/kf5-debug -t Debug -g Ninja -o ~/kf5-gcc-linux64-debug.tar.xz
-  - ./build_frameworks.sh -i ~/kf5-release -t Release -g Ninja -o ~/kf5-gcc7-linux64-release.tar.xz -a "-DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7"
 
-after_success:
-  - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
-  - bash ./upload.sh ~/kf5-gcc7-linux64-debug.tar.xz ~/kf5-gcc7-linux64-release.tar.xz
+
+jobs:
+  include:
+    - stage: TIER_1
+      env:
+      - BUILD_TIER_0=1
+      - BUILD_TIER_1=1
+      script:
+      - ~/mc mb ${KF5_INSTALL_DIR}
+
+      - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a ${EXTRA_CMAKE_ARGS}
+      - ~/mc mb ${BUCKET}
+      - ~/mc mirror ${KF5_INSTALL_DIR} ${BUCKET} --overwrite
+    - stage: TIER_2
+      env:
+      - BUILD_TIER_2=1
+      script:
+      - ~/mc mirror ${BUCKET} ${KF5_INSTALL_DIR} --overwrite
+      - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a ${EXTRA_CMAKE_ARGS}
+      - ~/mc mirror ${KF5_INSTALL_DIR} ${BUCKET} --overwrite
+    - stage: TIER_3
+      env:
+      - BUILD_TIER_3=1
+      script:
+      - ~/mc mirror ${BUCKET} ${KF5_INSTALL_DIR} --overwrite
+      - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a ${EXTRA_CMAKE_ARGS}
+      - ~/mc mirror ${KF5_INSTALL_DIR} ${BUCKET} --overwrite
+    - stage: upload
+      script:
+      - ~/mc mirror ${BUCKET} ${KF5_INSTALL_DIR} --overwrite
+      - export PACKAGE_FILE_NAME="kf5-${KF5_VERSION}-${KF5_BUILD_TYPE}-ubuntu-trusty-amd64.tar.xz"
+      - ./pack.sh ${KF5_INSTALL_DIR} ~/${PACKAGE_FILE_NAME}
+      - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+      - bash ./upload.sh ~/${PACKAGE_FILE_NAME}
+    - stage: clean
+      script: ~/mc rm ${BUCKET} --recursive --force

@@ -99,84 +99,86 @@ build_framework() {
 }
 
 # ECM
-build_framework extra-cmake-modules
+if [[ ${BUILD_TIER_0} ]]; then
+    build_framework extra-cmake-modules
+fi
 
-if [[ ${BUILD_TIER_1} ]]; then
 # Tier 1 Frameworks
-build_framework attica
-build_framework kconfig
-#build_framework bluez-qt # kinda buggy with install paths
-build_framework kapidox
-build_framework kdnssd
-build_framework kidletime
-build_framework kplotting
-#build_framework modemmanager-qt # this crashes gcc for some reason...
-#build_framework networkmanager-qt # it's been a pain in the ass to get the dependencies to work on travis. Contact me if you want this implemented.
-#build_framework kwayland # trusty gives hella old version of this
-build_framework prison
-build_framework kguiaddons
-build_framework ki18n
-build_framework kitemviews
-build_framework sonnet
-build_framework kwidgetsaddons
-build_framework kwindowsystem
-build_framework kdbusaddons
-build_framework karchive
-build_framework kcoreaddons
-build_framework kcodecs
-build_framework solid
-build_framework kitemmodels
-build_framework threadweaver
-build_framework syntax-highlighting
-build_framework breeze-icons
+if [[ ${BUILD_TIER_1} ]]; then
+    build_framework attica
+    build_framework kconfig
+    #build_framework bluez-qt # kinda buggy with install paths
+    build_framework kapidox
+    build_framework kdnssd
+    build_framework kidletime
+    build_framework kplotting
+    #build_framework modemmanager-qt # this crashes gcc for some reason...
+    #build_framework networkmanager-qt # it's been a pain in the ass to get the dependencies to work on travis. Contact me if you want this implemented.
+    #build_framework kwayland # trusty gives hella old version of this
+    build_framework prison
+    build_framework kguiaddons
+    build_framework ki18n
+    build_framework kitemviews
+    build_framework sonnet
+    build_framework kwidgetsaddons
+    build_framework kwindowsystem
+    build_framework kdbusaddons
+    build_framework karchive
+    build_framework kcoreaddons
+    build_framework kcodecs
+    build_framework solid
+    build_framework kitemmodels
+    build_framework threadweaver
+    build_framework syntax-highlighting
+    build_framework breeze-icons
 fi
 
-if [[ ${BUILD_TIER_2} ]]; then
 # Tier 2 Frameworks
-build_framework kcompletion
-build_framework kfilemetadata
-build_framework kjobwidgets
-build_framework kcrash
-build_framework kimageformats
-build_framework kunitconversion
-build_framework kauth
-build_framework knotifications
-build_framework kpackage
-build_framework kdoctools
-build_framework kpty
+if [[ ${BUILD_TIER_2} ]]; then
+    build_framework kcompletion
+    build_framework kfilemetadata
+    build_framework kjobwidgets
+    build_framework kcrash
+    build_framework kimageformats
+    build_framework kunitconversion
+    build_framework kauth
+    build_framework knotifications
+    build_framework kpackage
+    build_framework kdoctools
+    build_framework kpty
 fi
 
-if [[ ${BUILD_TIER_3} ]]; then
 # Tier 3 Frameworks
-build_framework kservice
-build_framework kdesu
-build_framework kemoticons
-build_framework kpeople
-build_framework kconfigwidgets
-build_framework kiconthemes
-build_framework ktextwidgets
-build_framework kglobalaccel
-build_framework kxmlgui
-build_framework kbookmarks
-# build_framework kwallet
-build_framework kio
-build_framework kactivities
-build_framework kactivities-stats
-build_framework baloo
-# build_framework kded # requires a KDE install
-build_framework kxmlrpcclient
-build_framework kparts
-# build_framework kdewebkit
-build_framework kdesignerplugin
-build_framework knewstuff
-build_framework ktexteditor
-build_framework kdeclarative
-build_framework plasma-framework
-build_framework kirigami2
-build_framework kcmutils
-build_framework knotifyconfig
-build_framework krunner
-build_framework kinit
+if [[ ${BUILD_TIER_3} ]]; then
+    build_framework kservice
+    build_framework kdesu
+    build_framework kemoticons
+    build_framework kpeople
+    build_framework kconfigwidgets
+    build_framework kiconthemes
+    build_framework ktextwidgets
+    build_framework kglobalaccel
+    build_framework kxmlgui
+    build_framework kbookmarks
+    # build_framework kwallet
+    build_framework kio
+    build_framework kactivities
+    build_framework kactivities-stats
+    build_framework baloo
+    # build_framework kded # requires a KDE install
+    build_framework kxmlrpcclient
+    build_framework kparts
+    # build_framework kdewebkit
+    build_framework kdesignerplugin
+    build_framework knewstuff
+    build_framework ktexteditor
+    build_framework kdeclarative
+    build_framework plasma-framework
+    build_framework kirigami2
+    build_framework kcmutils
+    build_framework knotifyconfig
+    build_framework krunner
+    build_framework kinit
 fi;
 
 # if everything went smoothly, remove the builddir
