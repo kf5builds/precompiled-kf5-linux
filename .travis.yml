@@ -87,7 +87,7 @@ jobs:
       script:
       - mkdir ${KF5_INSTALL_DIR}
       - ~/mc cp ${BUCKET}/tier_1-${PACKAGE_FILE_NAME} ~/tier_1-${PACKAGE_FILE_NAME}
-      - tar xpvf ~/tier_1-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
+      - tar xpf ~/tier_1-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
 
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
 
@@ -99,7 +99,7 @@ jobs:
       script:
       - mkdir ${KF5_INSTALL_DIR}
       - ~/mc cp ${BUCKET}/tier_2-${PACKAGE_FILE_NAME} ~/tier_2-${PACKAGE_FILE_NAME}
-      - tar xpvf ~/tier_2-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
+      - tar xpf ~/tier_2-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
 
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
 
