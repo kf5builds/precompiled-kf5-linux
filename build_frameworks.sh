@@ -170,8 +170,8 @@ if [[ ${BUILD_TIER_3} ]]; then
     build_framework knewstuff
     build_framework ktexteditor
     build_framework kdeclarative
-    build_framework plasma-framework
     build_framework kirigami2
+    build_framework plasma-framework
     build_framework kcmutils
     build_framework knotifyconfig
     build_framework krunner
