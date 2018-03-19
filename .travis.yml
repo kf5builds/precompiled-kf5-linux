@@ -104,7 +104,7 @@ jobs:
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
 
       - ./pack.sh ${KF5_INSTALL_DIR} ~/tier_3-${PACKAGE_FILE_NAME}
-      - ~/mc cp ~/tier_3-${PACKAGE_FILE_NAME} ${BUCKET}/tier_3-${PACKAGE_FILE_NAME} --overwrite
+      - ~/mc cp ~/tier_3-${PACKAGE_FILE_NAME} ${BUCKET}/tier_3-${PACKAGE_FILE_NAME}
     - stage: upload
       script:
       - ~/mc cp ${BUCKET}/tier_3-${PACKAGE_FILE_NAME} ~/${PACKAGE_FILE_NAME}
