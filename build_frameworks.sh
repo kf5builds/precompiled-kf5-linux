@@ -149,7 +149,7 @@ if [[ ${BUILD_TIER_2} ]]; then
 fi
 
 # Tier 3 Frameworks
-if [[ ${BUILD_TIER_3} ]]; then
+if [[ ${BUILD_TIER_3_1} ]]; then
     build_framework kservice
     build_framework kdesu
     build_framework kemoticons
@@ -168,6 +168,8 @@ if [[ ${BUILD_TIER_3} ]]; then
     # build_framework kded # requires a KDE install
     build_framework kxmlrpcclient
     build_framework kparts
+fi
+if [[ ${BUILD_TIER_3_2} ]]; then
     # build_framework kdewebkit
     build_framework kdesignerplugin
     build_framework knewstuff
