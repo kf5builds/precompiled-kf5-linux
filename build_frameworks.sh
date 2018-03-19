@@ -95,6 +95,9 @@ build_framework() {
     printf "Done.\n"
 }
 
+
+(while :; do sleep 300; echo "KEEP TRAVIS ALIVE TICK"; done) &
+
 # ECM
 if [[ ${BUILD_TIER_0} ]]; then
     build_framework extra-cmake-modules
