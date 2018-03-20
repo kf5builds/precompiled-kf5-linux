@@ -77,7 +77,7 @@ jobs:
 
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
 
-      - ~/mc rm ${BUCKET} --recursbuild_framework kirigami2ive --force # Clean whatever could be left from previous builds
+      - ~/mc rm ${BUCKET} --recursive --force # Clean whatever could be left from previous builds
       - ~/mc mb ${BUCKET}
       - ./pack.sh ${KF5_INSTALL_DIR} ~/tier_1-${PACKAGE_FILE_NAME}
       - ~/mc cp ~/tier_1-${PACKAGE_FILE_NAME} ${BUCKET}/tier_1-${PACKAGE_FILE_NAME}
