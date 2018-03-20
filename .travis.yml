@@ -68,31 +68,31 @@ before_install:
 
 jobs:
   include:
-#    - stage: TIER_1
-#      env:
-#      - BUILD_TIER_0=1
-#      - BUILD_TIER_1=1
-#      script:
-#      - mkdir ${KF5_INSTALL_DIR}
-#
-#      - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
-#
-#      - ~/mc rm ${BUCKET} --recursbuild_framework kirigami2ive --force # Clean whatever could be left from previous builds
-#      - ~/mc mb ${BUCKET}
-#      - ./pack.sh ${KF5_INSTALL_DIR} ~/tier_1-${PACKAGE_FILE_NAME}
-#      - ~/mc cp ~/tier_1-${PACKAGE_FILE_NAME} ${BUCKET}/tier_1-${PACKAGE_FILE_NAME}
-#    - stage: TIER_2
-#      env:
-#      - BUILD_TIER_2=1
-#      script:
-#      - mkdir ${KF5_INSTALL_DIR}
-#      - ~/mc cp ${BUCKET}/tier_1-${PACKAGE_FILE_NAME} ~/tier_1-${PACKAGE_FILE_NAME}
-#      - tar xpf ~/tier_1-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
-#
-#      - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
-#
-#      - ./pack.sh ${KF5_INSTALL_DIR} ~/tier_2-${PACKAGE_FILE_NAME}
-#      - ~/mc cp ~/tier_2-${PACKAGE_FILE_NAME} ${BUCKET}/tier_2-${PACKAGE_FILE_NAME}
+    - stage: TIER_1
+      env:
+      - BUILD_TIER_0=1
+      - BUILD_TIER_1=1
+      script:
+      - mkdir ${KF5_INSTALL_DIR}
+
+      - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
+
+      - ~/mc rm ${BUCKET} --recursbuild_framework kirigami2ive --force # Clean whatever could be left from previous builds
+      - ~/mc mb ${BUCKET}
+      - ./pack.sh ${KF5_INSTALL_DIR} ~/tier_1-${PACKAGE_FILE_NAME}
+      - ~/mc cp ~/tier_1-${PACKAGE_FILE_NAME} ${BUCKET}/tier_1-${PACKAGE_FILE_NAME}
+    - stage: TIER_2
+      env:
+      - BUILD_TIER_2=1
+      script:
+      - mkdir ${KF5_INSTALL_DIR}
+      - ~/mc cp ${BUCKET}/tier_1-${PACKAGE_FILE_NAME} ~/tier_1-${PACKAGE_FILE_NAME}
+      - tar xpf ~/tier_1-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
+
+      - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
+
+      - ./pack.sh ${KF5_INSTALL_DIR} ~/tier_2-${PACKAGE_FILE_NAME}
+      - ~/mc cp ~/tier_2-${PACKAGE_FILE_NAME} ${BUCKET}/tier_2-${PACKAGE_FILE_NAME}
     - stage: TIER_3.1
       env:
       - BUILD_TIER_3_1=1
@@ -122,5 +122,4 @@ jobs:
       - ~/mc cp ${BUCKET}/tier_3.2-${PACKAGE_FILE_NAME} ~/${PACKAGE_FILE_NAME}
       - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
       - bash ./upload.sh ~/${PACKAGE_FILE_NAME}
-    - stage: clean
-      script: ~/mc rm ${BUCKET} --recursive --force
+      - ~/mc rm ${BUCKET} --recursive --force
