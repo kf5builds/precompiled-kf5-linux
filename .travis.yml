@@ -65,9 +65,6 @@ env:
 before_install:
   # Update CMake
   - wget https://cmake.org/files/v3.11/cmake-3.11.0-rc3-Linux-x86_64.tar.gz -O- | sudo tar xz -C /usr --strip-components=1
-  - wget https://dl.minio.io/client/mc/release/linux-amd64/mc -O ~/mc
-  - chmod +x ~/mc
-  - ~/mc config host add minio https://nxos-data.assassinate-you.net/ ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY}
   - source /opt/qt510/bin/qt510-env.sh
 
 
@@ -82,8 +79,7 @@ jobs:
 
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
 
-      - ~/mc rm ${BUCKET} --recursive --force # Clean whatever could be left from previous builds
-      - ~/mc mb ${BUCKET}
+      - rm -rf $CACHE_DIR
       - mkdir $CACHE_DIR
       - ./pack.sh ${KF5_INSTALL_DIR} ${CACHE_DIR}/tier_1-${PACKAGE_FILE_NAME}
     - stage: TIER_2
@@ -118,4 +114,4 @@ jobs:
       script:
       - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
       - bash ./upload.sh ${CACHE_DIR}/tier_3.2-${PACKAGE_FILE_NAME}
-      - ~/mc rm ${BUCKET} --recursive --force
+      - rm -rf $CACHE_DIR
