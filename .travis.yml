@@ -41,10 +41,6 @@ addons:
       - gperf
       - wget
 
-cache:
-  directories:
-  - /home/travis/cache
-
 branches:
   except:
     - # Do not build tags that we create when we upload to GitHub Releases
@@ -53,7 +49,6 @@ branches:
 
 env:
   global:
-    - BUCKET='minio/kf5-build'
     - CACHE_DIR="$HOME/cache"
     - KF5_BUILD_TYPE="Release"
     - BUILD_GENERATOR="Ninja"
@@ -61,6 +56,14 @@ env:
     - KF5_VERSION=5.44.0
     - EXTRA_CMAKE_ARGS="-DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7"
     - PACKAGE_FILE_NAME="kf5-${KF5_VERSION}-${KF5_BUILD_TYPE}-ubuntu-trusty-amd64.tar.xz"
+
+before_cache:
+  - mkdir -p ${CACHE_DIR}
+  - rm ${CACHE_DIR}/*
+cache:
+  directories:
+  - ${CACHE_DIR}
+
 
 before_install:
   # Update CMake
