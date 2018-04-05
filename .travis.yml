@@ -1,5 +1,5 @@
 language: cpp
-sudo: required
+sudo: false
 os: linux
 dist: trusty
 
@@ -67,7 +67,8 @@ cache:
 
 before_install:
   # Update CMake
-  - wget https://cmake.org/files/v3.11/cmake-3.11.0-rc3-Linux-x86_64.tar.gz -O- | sudo tar xz -C /usr --strip-components=1
+  - mkdir $HOME/cmake
+  - wget https://cmake.org/files/v3.11/cmake-3.11.0-rc3-Linux-x86_64.tar.gz -O- | tar xz -C $HOME/cmake --strip-components=1
   - source /opt/qt510/bin/qt510-env.sh
 
 
@@ -79,7 +80,7 @@ jobs:
       - BUILD_TIER_1=1
       script:
       - mkdir ${KF5_INSTALL_DIR}
-
+      - export PATH="$PATH:$HOME/cmake/bin"
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
 
       - rm -rf $CACHE_DIR
@@ -91,6 +92,7 @@ jobs:
       script:
       - mkdir ${KF5_INSTALL_DIR}
       - tar xpf ${CACHE_DIR}/tier_1-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
+      - export PATH="$PATH:$HOME/cmake/bin"
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
       - ./pack.sh ${KF5_INSTALL_DIR} ${CACHE_DIR}/tier_2-${PACKAGE_FILE_NAME}
     - stage: TIER_3.1
@@ -99,7 +101,7 @@ jobs:
       script:
       - mkdir ${KF5_INSTALL_DIR}
       - tar xpf ${CACHE_DIR}/tier_2-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
-
+      - export PATH="$PATH:$HOME/cmake/bin"
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
 
       - ./pack.sh ${KF5_INSTALL_DIR} ${CACHE_DIR}/tier_3.1-${PACKAGE_FILE_NAME}
@@ -109,7 +111,7 @@ jobs:
       script:
       - mkdir ${KF5_INSTALL_DIR}
       - tar xpf ${CACHE_DIR}/tier_3.1-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
-
+      - export PATH="$PATH:$HOME/cmake/bin"
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
 
       - ./pack.sh ${KF5_INSTALL_DIR} ${CACHE_DIR}/tier_3.2-${PACKAGE_FILE_NAME}
