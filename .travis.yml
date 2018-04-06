@@ -26,8 +26,8 @@ addons:
 #      - libwayland-dev
 #      - libegl1-mesa-dev
       - pkg-config
-      - g++-7
-      - gcc-7
+      - g++
+      - gcc
       - libqrencode-dev
       - libdmtx-dev
       - libattr1-dev
