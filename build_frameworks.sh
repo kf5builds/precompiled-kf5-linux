@@ -127,7 +127,7 @@ if [[ ${BUILD_TIER_1} ]]; then
     build_framework kcoreaddons
     build_framework kcodecs
     build_framework solid
-    build_framework kitemmodels
+    # build_framework kitemmodels # this crashes gcc for some reason...
     build_framework threadweaver
     build_framework syntax-highlighting
     build_framework breeze-icons
