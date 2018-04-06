@@ -57,9 +57,6 @@ env:
     - EXTRA_CMAKE_ARGS="-DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7"
     - PACKAGE_FILE_NAME="kf5-${KF5_VERSION}-${KF5_BUILD_TYPE}-ubuntu-trusty-amd64.tar.xz"
 
-before_cache:
-  - mkdir -p ${CACHE_DIR}
-  - rm ${CACHE_DIR}/*
 cache:
   directories:
   - ${CACHE_DIR}
@@ -86,10 +83,12 @@ jobs:
       - rm -rf $CACHE_DIR
       - mkdir $CACHE_DIR
       - ./pack.sh ${KF5_INSTALL_DIR} ${CACHE_DIR}/tier_1-${PACKAGE_FILE_NAME}
+      - find $CACHE_DIR
     - stage: TIER_2
       env:
       - BUILD_TIER_2=1
       script:
+      - find $CACHE_DIR
       - mkdir ${KF5_INSTALL_DIR}
       - tar xpf ${CACHE_DIR}/tier_1-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
       - export PATH="$PATH:$HOME/cmake/bin"
