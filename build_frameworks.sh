@@ -99,12 +99,13 @@ build_framework() {
 (while :; do sleep 300; echo "KEEP TRAVIS ALIVE TICK"; done) &
 
 # ECM
-if [[ ${BUILD_TIER_0} ]]; then
+if [[ ! -f  "$installDir/ECM_BUILT" ]]; then
     build_framework extra-cmake-modules
+    touch "$installDir/ECM_BUILT"
 fi
 
 # Tier 1 Frameworks
-if [[ ${BUILD_TIER_1} ]]; then
+if [[ ! -f  "$installDir/TIER_1_BUILT" ]]; then
     build_framework attica
     build_framework kconfig
     #build_framework bluez-qt # kinda buggy with install paths
@@ -131,10 +132,12 @@ if [[ ${BUILD_TIER_1} ]]; then
     build_framework threadweaver
     build_framework syntax-highlighting
     build_framework breeze-icons
+
+    touch "$installDir/TIER_1_BUILT"
 fi
 
 # Tier 2 Frameworks
-if [[ ${BUILD_TIER_2} ]]; then
+if [[ ! -f  "$installDir/TIER_2_BUILT" ]]; then
     build_framework kcompletion
     build_framework kfilemetadata
     build_framework kjobwidgets
@@ -146,10 +149,12 @@ if [[ ${BUILD_TIER_2} ]]; then
     build_framework kpackage
     build_framework kdoctools
     build_framework kpty
+
+    touch "$installDir/TIER_2_BUILT"
 fi
 
 # Tier 3 Frameworks
-if [[ ${BUILD_TIER_3_1} ]]; then
+if [[ ! -f  "$installDir/TIER_3_1_BUILT" ]]; then
     build_framework kservice
     build_framework kdesu
     build_framework kemoticons
@@ -168,8 +173,11 @@ if [[ ${BUILD_TIER_3_1} ]]; then
     # build_framework kded # requires a KDE install
     build_framework kxmlrpcclient
     build_framework kparts
+
+    touch "$installDir/TIER_3_1_BUILT"
 fi
-if [[ ${BUILD_TIER_3_2} ]]; then
+
+if [[ ! -f  "$installDir/TIER_3_2_BUILT" ]]; then
     # build_framework kdewebkit
     build_framework kdesignerplugin
     build_framework knewstuff
@@ -181,6 +189,8 @@ if [[ ${BUILD_TIER_3_2} ]]; then
     build_framework knotifyconfig
     build_framework krunner
     build_framework kinit
+
+    touch "$installDir/TIER_3_1_BUILT"
 fi;
 
 # if everything went smoothly, remove the builddir

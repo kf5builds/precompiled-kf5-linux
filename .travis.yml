@@ -49,7 +49,6 @@ branches:
 
 env:
   global:
-    - CACHE_DIR="$HOME/cache"
     - KF5_BUILD_TYPE="Release"
     - BUILD_GENERATOR="Ninja"
     - KF5_INSTALL_DIR="${HOME}/kf5-build-output"
@@ -59,63 +58,39 @@ env:
 
 cache:
   directories:
-  - ${CACHE_DIR}
+  - ${KF5_INSTALL_DIR}
 
 
 before_install:
   # Update CMake
   - mkdir $HOME/cmake
   - wget https://cmake.org/files/v3.11/cmake-3.11.0-rc3-Linux-x86_64.tar.gz -O- | tar xz -C $HOME/cmake --strip-components=1
+  - export PATH="$PATH:$HOME/cmake/bin"
   - source /opt/qt510/bin/qt510-env.sh
 
 
 jobs:
   include:
     - stage: TIER_1
-      env:
-      - BUILD_TIER_0=1
-      - BUILD_TIER_1=1
       script:
-      - mkdir ${KF5_INSTALL_DIR}
-      - export PATH="$PATH:$HOME/cmake/bin"
+      - mkdir -p ${KF5_INSTALL_DIR}
+      - rm -rf ${KF5_INSTALL_DIR}/*
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
-
-      - rm -rf $CACHE_DIR
-      - mkdir $CACHE_DIR
-      - ./pack.sh ${KF5_INSTALL_DIR} ${CACHE_DIR}/tier_1-${PACKAGE_FILE_NAME}
       - find $CACHE_DIR
     - stage: TIER_2
-      env:
-      - BUILD_TIER_2=1
       script:
       - find $CACHE_DIR
-      - mkdir ${KF5_INSTALL_DIR}
-      - tar xpf ${CACHE_DIR}/tier_1-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
-      - export PATH="$PATH:$HOME/cmake/bin"
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
-      - ./pack.sh ${KF5_INSTALL_DIR} ${CACHE_DIR}/tier_2-${PACKAGE_FILE_NAME}
     - stage: TIER_3.1
-      env:
-      - BUILD_TIER_3_1=1
       script:
-      - mkdir ${KF5_INSTALL_DIR}
-      - tar xpf ${CACHE_DIR}/tier_2-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
-      - export PATH="$PATH:$HOME/cmake/bin"
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
-
-      - ./pack.sh ${KF5_INSTALL_DIR} ${CACHE_DIR}/tier_3.1-${PACKAGE_FILE_NAME}
     - stage: TIER_3.2
-      env:
-      - BUILD_TIER_3_2=1
       script:
-      - mkdir ${KF5_INSTALL_DIR}
-      - tar xpf ${CACHE_DIR}/tier_3.1-${PACKAGE_FILE_NAME} -C ${KF5_INSTALL_DIR}
-      - export PATH="$PATH:$HOME/cmake/bin"
       - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
-
-      - ./pack.sh ${KF5_INSTALL_DIR} ${CACHE_DIR}/tier_3.2-${PACKAGE_FILE_NAME}
     - stage: upload
       script:
+      - rm ${KF5_INSTALL_DIR}/*BUILT*
+      - ./pack.sh ${KF5_INSTALL_DIR} $HOME/${PACKAGE_FILE_NAME}
       - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
-      - bash ./upload.sh ${CACHE_DIR}/tier_3.2-${PACKAGE_FILE_NAME}
-      - rm -rf $CACHE_DIR
+      - bash ./upload.sh $HOME/${PACKAGE_FILE_NAME}
+      - rm -rf ${KF5_INSTALL_DIR}/*
