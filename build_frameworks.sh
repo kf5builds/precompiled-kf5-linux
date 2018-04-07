@@ -128,7 +128,7 @@ if [[ ! -f  "$installDir/TIER_1_BUILT" ]]; then
     build_framework kcoreaddons
     build_framework kcodecs
     build_framework solid
-    # build_framework kitemmodels # this crashes gcc for some reason...
+    build_framework kitemmodels # this crashes gcc for some reason...
     build_framework threadweaver
     build_framework syntax-highlighting
     build_framework breeze-icons
