@@ -46,7 +46,6 @@ branches:
     - # Do not build tags that we create when we upload to GitHub Releases
     - /^(?i:continuous)$/
 
-
 env:
   global:
     - KF5_BUILD_TYPE="Release"
@@ -67,7 +66,6 @@ before_install:
   - wget https://cmake.org/files/v3.11/cmake-3.11.0-rc3-Linux-x86_64.tar.gz -O- | tar xz -C $HOME/cmake --strip-components=1
   - export PATH="$PATH:$HOME/cmake/bin"
   - source /opt/qt510/bin/qt510-env.sh
-
 
 jobs:
   include:
