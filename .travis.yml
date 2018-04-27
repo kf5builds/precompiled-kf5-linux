@@ -1,8 +1,7 @@
 language: cpp
-sudo: required
+sudo: true
 os: linux
 dist: trusty
-
 
 addons:
   apt:
@@ -47,15 +46,49 @@ branches:
     - # Do not build tags that we create when we upload to GitHub Releases
     - /^(?i:continuous)$/
 
-install:
+env:
+  global:
+    - KF5_BUILD_TYPE="Release"
+    - BUILD_GENERATOR="Ninja"
+    - KF5_INSTALL_DIR="${HOME}/kf5-build-output"
+    - KF5_VERSION=5.44.0
+    - EXTRA_CMAKE_ARGS="-DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7"
+    - PACKAGE_FILE_NAME="kf5-${KF5_VERSION}-${KF5_BUILD_TYPE}-ubuntu-trusty-amd64.tar.xz"
+
+cache:
+  directories:
+  - ${KF5_INSTALL_DIR}
+
+
+before_install:
   # Update CMake
-  - wget https://cmake.org/files/v3.11/cmake-3.11.0-rc3-Linux-x86_64.tar.gz -O- | sudo tar xz -C /usr --strip-components=1
-
-script:
+  - mkdir $HOME/cmake
+  - wget https://cmake.org/files/v3.11/cmake-3.11.0-rc3-Linux-x86_64.tar.gz -O- | tar xz -C $HOME/cmake --strip-components=1
+  - export PATH="$PATH:$HOME/cmake/bin"
   - source /opt/qt510/bin/qt510-env.sh
-#  - ./build_frameworks.sh -i ~/kf5-debug -t Debug -g Ninja -o ~/kf5-gcc-linux64-debug.tar.xz
-  - ./build_frameworks.sh -i ~/kf5-release -t Release -g Ninja -o ~/kf5-gcc7-linux64-release.tar.xz -a "-DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7"
 
-after_success:
-  - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
-  - bash ./upload.sh ~/kf5-gcc7-linux64-debug.tar.xz ~/kf5-gcc7-linux64-release.tar.xz
+jobs:
+  include:
+    - stage: TIER_1
+      script:
+      - mkdir -p ${KF5_INSTALL_DIR}
+      - rm -rf ${KF5_INSTALL_DIR}/*
+      - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
+      - find $CACHE_DIR
+    - stage: TIER_2
+      script:
+      - find $CACHE_DIR
+      - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
+    - stage: TIER_3.1
+      script:
+      - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
+    - stage: TIER_3.2
+      script:
+      - ./build_frameworks.sh -i ${KF5_INSTALL_DIR} -t ${KF5_BUILD_TYPE} -g ${BUILD_GENERATOR} -a "${EXTRA_CMAKE_ARGS}"
+    - stage: upload
+      script:
+      - rm ${KF5_INSTALL_DIR}/*BUILT*
+      - ./pack.sh ${KF5_INSTALL_DIR} $HOME/${PACKAGE_FILE_NAME}
+      - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+      - bash ./upload.sh $HOME/${PACKAGE_FILE_NAME}
+      - rm -rf ${KF5_INSTALL_DIR}/*

@@ -3,7 +3,7 @@
 set -e
 
 usage() {
-	echo "Usage: build_frameworks.sh [ -t Release|Debug  ]] [ -g <CMake Generator, like Ninja or Unix Makefiles ] [ -v version of KF5 to install, example 5.33.0 ] -i /path/to/install [ -o path/to/tarball ] [ -a Extra CMake args ]"
+	echo "Usage: build_frameworks.sh [ -t Release|Debug  ]] [ -g <CMake Generator, like Ninja or Unix Makefiles ] [ -v version of KF5 to install, example 5.33.0 ] -i /path/to/install [ -a Extra CMake args ]"
 	exit 1
 }
 
@@ -15,7 +15,7 @@ kf5Version=5.44.0
 tarballPath=""
 extraCmakeArgs=""
 
-while getopts ":t:q:g:v:i:o:a:" o; do
+while getopts ":t:q:g:v:i:a:" o; do
 	case "${o}" in
 		t) 
 			buildType=${OPTARG}
@@ -32,9 +32,6 @@ while getopts ":t:q:g:v:i:o:a:" o; do
 			;;
 		v)
 			kf5Version=${OPTARG}
-			;;
-		o)
-			tarballPath=${OPTARG}
 			;;
 		a)
 			extraCmakeArgs=${OPTARG}
@@ -98,99 +95,106 @@ build_framework() {
     printf "Done.\n"
 }
 
+
+(while :; do sleep 300; echo "KEEP TRAVIS ALIVE TICK"; done) &
+
 # ECM
-build_framework extra-cmake-modules
+if [[ ! -f  "$installDir/ECM_BUILT" ]]; then
+    build_framework extra-cmake-modules
+    touch "$installDir/ECM_BUILT"
+fi
 
-if [[ ${BUILD_TIER_1} ]]; then
 # Tier 1 Frameworks
-build_framework attica
-build_framework kconfig
-#build_framework bluez-qt # kinda buggy with install paths
-build_framework kapidox
-build_framework kdnssd
-build_framework kidletime
-build_framework kplotting
-#build_framework modemmanager-qt # this crashes gcc for some reason...
-#build_framework networkmanager-qt # it's been a pain in the ass to get the dependencies to work on travis. Contact me if you want this implemented.
-#build_framework kwayland # trusty gives hella old version of this
-build_framework prison
-build_framework kguiaddons
-build_framework ki18n
-build_framework kitemviews
-build_framework sonnet
-build_framework kwidgetsaddons
-build_framework kwindowsystem
-build_framework kdbusaddons
-build_framework karchive
-build_framework kcoreaddons
-build_framework kcodecs
-build_framework solid
-build_framework kitemmodels
-build_framework threadweaver
-build_framework syntax-highlighting
-build_framework breeze-icons
+if [[ ! -f  "$installDir/TIER_1_BUILT" ]]; then
+    build_framework attica
+    build_framework kconfig
+    #build_framework bluez-qt # kinda buggy with install paths
+    build_framework kapidox
+    build_framework kdnssd
+    build_framework kidletime
+    build_framework kplotting
+    #build_framework modemmanager-qt # this crashes gcc for some reason...
+    #build_framework networkmanager-qt # it's been a pain in the ass to get the dependencies to work on travis. Contact me if you want this implemented.
+    #build_framework kwayland # trusty gives hella old version of this
+    build_framework prison
+    build_framework kguiaddons
+    build_framework ki18n
+    build_framework kitemviews
+    build_framework sonnet
+    build_framework kwidgetsaddons
+    build_framework kwindowsystem
+    build_framework kdbusaddons
+    build_framework karchive
+    build_framework kcoreaddons
+    build_framework kcodecs
+    build_framework solid
+    build_framework kitemmodels # this crashes gcc for some reason...
+    build_framework threadweaver
+    build_framework syntax-highlighting
+    build_framework breeze-icons
+
+    touch "$installDir/TIER_1_BUILT"
+    exit 0
 fi
 
-if [[ ${BUILD_TIER_2} ]]; then
 # Tier 2 Frameworks
-build_framework kcompletion
-build_framework kfilemetadata
-build_framework kjobwidgets
-build_framework kcrash
-build_framework kimageformats
-build_framework kunitconversion
-build_framework kauth
-build_framework knotifications
-build_framework kpackage
-build_framework kdoctools
-build_framework kpty
+if [[ ! -f  "$installDir/TIER_2_BUILT" ]]; then
+    build_framework kcompletion
+    build_framework kfilemetadata
+    build_framework kjobwidgets
+    build_framework kcrash
+    build_framework kimageformats
+    build_framework kunitconversion
+    build_framework kauth
+    build_framework knotifications
+    build_framework kpackage
+    build_framework kdoctools
+    build_framework kpty
+
+    touch "$installDir/TIER_2_BUILT"
+    exit 0
 fi
 
-if [[ ${BUILD_TIER_3} ]]; then
 # Tier 3 Frameworks
-build_framework kservice
-build_framework kdesu
-build_framework kemoticons
-build_framework kpeople
-build_framework kconfigwidgets
-build_framework kiconthemes
-build_framework ktextwidgets
-build_framework kglobalaccel
-build_framework kxmlgui
-build_framework kbookmarks
-# build_framework kwallet
-build_framework kio
-build_framework kactivities
-build_framework kactivities-stats
-build_framework baloo
-# build_framework kded # requires a KDE install
-build_framework kxmlrpcclient
-build_framework kparts
-# build_framework kdewebkit
-build_framework kdesignerplugin
-build_framework knewstuff
-build_framework ktexteditor
-build_framework kdeclarative
-build_framework plasma-framework
-build_framework kirigami2
-build_framework kcmutils
-build_framework knotifyconfig
-build_framework krunner
-build_framework kinit
+if [[ ! -f  "$installDir/TIER_3_1_BUILT" ]]; then
+    build_framework kservice
+    build_framework kdesu
+    build_framework kemoticons
+    build_framework kpeople
+    build_framework kconfigwidgets
+    build_framework kiconthemes
+    build_framework ktextwidgets
+    build_framework kglobalaccel
+    build_framework kxmlgui
+    build_framework kbookmarks
+    # build_framework kwallet
+    build_framework kio
+    build_framework kactivities
+    build_framework kactivities-stats
+    build_framework baloo
+    # build_framework kded # requires a KDE install
+    build_framework kxmlrpcclient
+    build_framework kparts
+
+    touch "$installDir/TIER_3_1_BUILT"
+    exit 0
+fi
+
+if [[ ! -f  "$installDir/TIER_3_2_BUILT" ]]; then
+    # build_framework kdewebkit
+    build_framework kdesignerplugin
+    build_framework knewstuff
+    build_framework ktexteditor
+    build_framework kdeclarative
+    build_framework kirigami2
+    build_framework plasma-framework
+    build_framework kcmutils
+    build_framework knotifyconfig
+    build_framework krunner
+    build_framework kinit
+
+    touch "$installDir/TIER_3_1_BUILT"
 fi;
 
 # if everything went smoothly, remove the builddir
 rm -r $builddir
-
-# compress if -o was specified
-if [ ! -z "$tarballPath" ]; then
-	if [ ${tarballPath: -3} == "bz2" ]; then
-		tar -cjf "$tarballPath" "$installDir"
-	elif [ ${tarballPath: -2} == "gz" ]; then
-		tar -czf "$tarballPath" "$installDir"
-	elif [ ${tarballPath: -2} == "xz" ]; then
-		tar -cJf "$tarballPath" "$installDir"
-	else
-		echo "Unrecognized file extension, end with .bz2, .gz, or .xz"
-	fi
-fi
