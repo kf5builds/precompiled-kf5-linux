@@ -60,18 +60,20 @@ mkdir -p $builddir
 build_framework() {
 
     framework=$1
-    printf "Building $1; "
+    echo "Building $1:"
 
     cd $builddir
 
     foldername=$framework-$kf5Version
 
-    printf 'Downloading...'
+    echo -n " - Downloading..."
     downloadURL="https://download.kde.org/stable/frameworks/$shortKF5Version/$foldername.tar.xz"
     wget $downloadURL &> $builddir/log.txt || ( echo &&  echo "Failed to download $downloadURL for $framework. Log: " && cat $builddir/log.txt && exit 1 )
-    printf 'Done; Extracting...'
+    echo "Done"
+    echo -n " - Extracting..."
     tar xvf $foldername.tar.xz &> $builddir/log.txt || ( echo && echo "Failed to extract $builddir/$foldername.tar.xz for $framework. Log: " && cat $builddir/log.txt && exit 1 )
-    printf 'Done; Configuring...'
+    echo "Done"
+    echo -n " - Configuring..."
 
     mkdir -p $foldername/build
     cd $foldername/build
@@ -84,11 +86,13 @@ build_framework() {
 			( echo && echo "Failed to configure $framework. cmake ..  Command: " &&
 			echo "cd $builddir/$foldername/build && cmake .. -DCMAKE_PREFIX_PATH=\"$installDir\" -DCMAKE_INSTALL_PREFIX=\"$installDir\" -DCMAKE_BUILD_TYPE=$buildType $extraCmakeArgs" && 
 			cat $builddir/log.txt && exit 1 )
-    printf 'Done; Building...'
+    echo "Done"
+    echo -n " - Building..."
     cmake --build . &> $builddir/log.txt || ( echo && echo "Failed to build $framework. Log: " && cat $builddir/log.txt && exit 1 )
-    printf 'Done; Installing...'
+    echo "Done"
+    echo -n " - Installing..."
     cmake --build . --target install &> $builddir/log.txt || ( echo && echo "Failed to install $framework. Log: " && cat $builddir/log.txt && exit 1 )
-    printf "Done.\n"
+    echo "Done"
 }
 
 
