@@ -19,8 +19,8 @@ dependencies preinstalled and environment variables are set.
 ```
 docker pull kf5builds/ubuntu:trusty
 docker run -v $PWD:/var/build/ kf5builds/ubuntu:trusty \
-  ./build_frameworks.sh -i /var/build/kf5-install -g Ninja -t Debug \
-  -a "-DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7"
+  ./build_frameworks.sh -i /var/build/kf5-install -g Ninja -t Release \
+  -a "-DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_C_COMPILER=gcc-8"
 ```
 
 ## Usage

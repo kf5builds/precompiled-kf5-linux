@@ -20,7 +20,7 @@ RUN apt-get update
 
 RUN apt-get -y --no-install-recommends install \
     qt510base qt510script qt510declarative qt510tools qt510x11extras qt510svg qt510quickcontrols2 \
-    ninja-build g++-7 gcc-7 pkg-config gperf \
+    ninja-build g++-8 gcc-8 pkg-config gperf \
     gettext bison wget texinfo docbook-xml docbook-xsl flex \
     libxcb-keysyms1-dev libxml2-utils libudev-dev libqrencode-dev libdmtx-dev \
     libattr1-dev libphonon4qt5-dev libphonon4qt5experimental-dev liburi-perl \
