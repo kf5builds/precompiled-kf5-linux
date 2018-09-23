@@ -36,7 +36,5 @@ ENV LD_LIBRARY_PATH=$QT_DIR/lib/x86_64-linux-gnu:$QT_DIR/lib:$LD_LIBRARY_PATH
 ENV PKG_CONFIG_PATH=$QT_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
 
 # Workaround to build all travis-ci tiers
-ENV BUILD_TIER_1=1
-ENV BUILD_TIER_2=1
-ENV BUILD_TIER_3=1
+ENV BUILD_ALL=1
 

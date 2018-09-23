@@ -8,7 +8,7 @@ A bunch of scripts for generating precompiled KF5 tarballs/directories
 Generates a tar.XX file and/or a directory with KF5 installed in it. Example:
 
 ```bash
-./build_frameworks.sh -i ~/my-kf5-install -g Ninja -t Debug -o ~/my-kf5-tarball.tar.xz
+./build_frameworks.sh -i ~/my-kf5-install -g Ninja -t Debug
 ```
 
 ## Building in docker
@@ -19,9 +19,8 @@ dependencies preinstalled and environment variables are set.
 ```
 docker pull kf5builds/ubuntu:trusty
 docker run -v $PWD:/var/build/ kf5builds/ubuntu:trusty \
-  ./build_frameworks.sh -i ~/my-kf5-install -g Ninja -t Debug \
-  -a "-DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7" \
-  -o ~/my-kf5-gcc7-linux64.tar.xz
+  ./build_frameworks.sh -i /var/build/kf5-install -g Ninja -t Debug \
+  -a "-DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7"
 ```
 
 ## Usage

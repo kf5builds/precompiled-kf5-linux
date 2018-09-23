@@ -11,13 +11,12 @@ usage() {
 buildType=Debug
 generator="Unix Makefiles"
 installDir=""
-kf5Version=5.45.0
-tarballPath=""
+kf5Version=5.50.0
 extraCmakeArgs=""
 
 while getopts ":t:q:g:v:i:a:" o; do
 	case "${o}" in
-		t) 
+		t)
 			buildType=${OPTARG}
 			if [ "$buildType" != "Debug" ] && [ "$buildType" != "Release" ]; then
 				echo "Unrecognized Build Type: $buildType"
@@ -49,9 +48,6 @@ if [ -z "$installDir" ]; then
 fi
 
 printf "Building KDE Frameworks 5 version \"$kf5Version\" with build type \"$buildType\", generator \"$generator\", into \"$installDir\", extra args $extraCmakeArgs"
-if [ -z "$tarballPath" ]; then
-	printf " and creating a tarball: \"$tarballPath\""
-fi
 echo
 
 mkdir -p $installDir
@@ -65,7 +61,7 @@ build_framework() {
 
     framework=$1
     printf "Building $1; "
-    
+
     cd $builddir
 
     foldername=$framework-$kf5Version
@@ -76,16 +72,16 @@ build_framework() {
     printf 'Done; Extracting...'
     tar xvf $foldername.tar.xz &> $builddir/log.txt || ( echo && echo "Failed to extract $builddir/$foldername.tar.xz for $framework. Log: " && cat $builddir/log.txt && exit 1 )
     printf 'Done; Configuring...'
-    
+
     mkdir -p $foldername/build
     cd $foldername/build
-    
+
     cmake .. \
 		-DCMAKE_PREFIX_PATH="$installDir" \
 		-DCMAKE_INSTALL_PREFIX="$installDir" \
 		-DCMAKE_BUILD_TYPE=$buildType \
 		-G"$generator" $extraCmakeArgs &> $builddir/log.txt || \
-			( echo && echo "Failed to configure $framework. cmake ..  Command: " && 
+			( echo && echo "Failed to configure $framework. cmake ..  Command: " &&
 			echo "cd $builddir/$foldername/build && cmake .. -DCMAKE_PREFIX_PATH=\"$installDir\" -DCMAKE_INSTALL_PREFIX=\"$installDir\" -DCMAKE_BUILD_TYPE=$buildType $extraCmakeArgs" && 
 			cat $builddir/log.txt && exit 1 )
     printf 'Done; Building...'
@@ -99,7 +95,7 @@ build_framework() {
 (while :; do sleep 300; echo "KEEP TRAVIS ALIVE TICK"; done) &
 
 # ECM
-if [[ ! -f  "$installDir/ECM_BUILT" ]]; then
+if [[ ! -f  "$installDir/ECM_BUILT" ]] || [[ ! -z BUILD_ECM ]]; then
     build_framework extra-cmake-modules
     touch "$installDir/ECM_BUILT"
 fi
@@ -134,7 +130,9 @@ if [[ ! -f  "$installDir/TIER_1_BUILT" ]]; then
     build_framework breeze-icons
 
     touch "$installDir/TIER_1_BUILT"
-    exit 0
+    if ! $BUILD_ALL; then
+        exit 0
+    fi
 fi
 
 # Tier 2 Frameworks
@@ -152,7 +150,9 @@ if [[ ! -f  "$installDir/TIER_2_BUILT" ]]; then
     build_framework kpty
 
     touch "$installDir/TIER_2_BUILT"
-    exit 0
+    if ! $BUILD_ALL; then
+        exit 0
+    fi
 fi
 
 # Tier 3 Frameworks
@@ -177,7 +177,9 @@ if [[ ! -f  "$installDir/TIER_3_1_BUILT" ]]; then
     build_framework kparts
 
     touch "$installDir/TIER_3_1_BUILT"
-    exit 0
+    if ! $BUILD_ALL; then
+        exit 0
+    fi
 fi
 
 if [[ ! -f  "$installDir/TIER_3_2_BUILT" ]]; then
