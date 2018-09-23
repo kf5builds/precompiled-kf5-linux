@@ -134,7 +134,7 @@ if [[ ! -f  "$installDir/TIER_1_BUILT" ]]; then
     build_framework breeze-icons
 
     touch "$installDir/TIER_1_BUILT"
-    if ! $BUILD_ALL; then
+    if [ -z $BUILD_ALL ]; then
         exit 0
     fi
 fi
@@ -154,7 +154,7 @@ if [[ ! -f  "$installDir/TIER_2_BUILT" ]]; then
     build_framework kpty
 
     touch "$installDir/TIER_2_BUILT"
-    if ! $BUILD_ALL; then
+    if [ -z $BUILD_ALL ]; then
         exit 0
     fi
 fi
@@ -181,7 +181,7 @@ if [[ ! -f  "$installDir/TIER_3_1_BUILT" ]]; then
     build_framework kparts
 
     touch "$installDir/TIER_3_1_BUILT"
-    if ! $BUILD_ALL; then
+    if [ -z $BUILD_ALL ]; then
         exit 0
     fi
 fi
