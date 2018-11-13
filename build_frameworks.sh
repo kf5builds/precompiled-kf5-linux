@@ -11,7 +11,7 @@ usage() {
 buildType=Debug
 generator="Unix Makefiles"
 installDir=""
-kf5Version=5.51.0
+kf5Version=5.52.0
 extraCmakeArgs=""
 
 while getopts ":t:q:g:v:i:a:" o; do
