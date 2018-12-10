@@ -51,7 +51,7 @@ env:
     - KF5_BUILD_TYPE="Release"
     - BUILD_GENERATOR="Ninja"
     - KF5_INSTALL_DIR="${HOME}/kf5-build-output"
-    - KF5_VERSION=5.52.0
+    - KF5_VERSION=5.53.0
     - EXTRA_CMAKE_ARGS="-DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_C_COMPILER=gcc-8"
     - PACKAGE_FILE_NAME="kf5-${KF5_VERSION}-${KF5_BUILD_TYPE}-ubuntu-trusty-amd64.tar.xz"
 
