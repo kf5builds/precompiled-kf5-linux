@@ -193,6 +193,7 @@ if [[ ! -f  "$installDir/TIER_3_2_BUILT" ]]; then
     build_framework ktexteditor
     build_framework kdeclarative
     build_framework kirigami2
+    build_framework qqc2-desktop-style
     build_framework plasma-framework
     build_framework kcmutils
     build_framework knotifyconfig
